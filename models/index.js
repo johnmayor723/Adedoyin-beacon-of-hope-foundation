@@ -56,4 +56,21 @@ const User = mongoose.model('User', new Schema({
   lastLogin: Date,
 }, { timestamps: true }));
 
-module.exports = { Content, Program, GalleryItem, Message, Subscriber, User };
+// A full copy of the editable site-content collections (Content/Program/
+// GalleryItem), taken before a change is saved -- lets an admin undo a
+// content edit/delete. 'original' is captured once, the first time this
+// feature runs, and is never rotated away (see lib/snapshots.js); 'auto' is
+// capped at the 3 most recent. Messages/Subscribers/Users are deliberately
+// never included: those are ongoing visitor/account data, not editable
+// "site content", and rolling them back would itself be a data-loss bug.
+const Snapshot = mongoose.model('Snapshot', new Schema({
+  kind: { type: String, enum: ['original', 'auto'], required: true },
+  label: { type: String, default: '' },
+  data: {
+    content: { type: [Schema.Types.Mixed], default: [] },
+    programs: { type: [Schema.Types.Mixed], default: [] },
+    gallery: { type: [Schema.Types.Mixed], default: [] },
+  },
+}, { timestamps: true }));
+
+module.exports = { Content, Program, GalleryItem, Message, Subscriber, User, Snapshot };

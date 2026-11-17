@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const seed = require('./lib/seed');
+const { ensureOriginalSnapshot } = require('./lib/snapshots');
 const { UPLOAD_DIR, csrfToken } = require('./lib/helpers');
 
 const PORT = process.env.PORT || 3000;
@@ -49,5 +50,6 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 
 mongoose.connect(MONGO_URI)
   .then(() => seed())
+  .then(() => ensureOriginalSnapshot())
   .then(() => app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}  (admin: /admin)`)))
   .catch((e) => { console.error('Failed to start:', e.message); process.exit(1); });

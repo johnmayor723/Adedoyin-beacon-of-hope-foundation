@@ -23,6 +23,7 @@
     <% Object.keys(groupList).forEach(k=>{ %><a class="<%= A('/settings/'+k) %>" href="/admin/settings/<%= k %>"><%= groupList[k].label %></a><% }) %>
     <p class="grp">Admin</p>
     <a class="<%= A('/users') %>" href="/admin/users">Users</a>
+    <a class="<%= A('/restore') %>" href="/admin/restore">Restore last state</a>
     <% } %>
     <a class="<%= A('/account') %>" href="/admin/account">My account</a>
   </nav>

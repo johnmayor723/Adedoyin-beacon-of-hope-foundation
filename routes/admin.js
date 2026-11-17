@@ -2,9 +2,10 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
-const { Content, Program, GalleryItem, Message, Subscriber, User } = require('../models');
+const { Content, Program, GalleryItem, Message, Subscriber, User, Snapshot } = require('../models');
 const { pages, settingsGroups, programFields } = require('../lib/schemas');
 const { coerce, slugify, upload, verifyCsrf, rateLimit, UPLOAD_DIR } = require('../lib/helpers');
+const { saveSnapshot, restoreSnapshot } = require('../lib/snapshots');
 
 const router = express.Router();
 const DUMMY_HASH = bcrypt.hashSync('not-a-real-password', 10);
@@ -92,6 +93,7 @@ router.get('/settings/:group', adminOnly, wrap(async (req, res, next) => {
 router.post('/settings/:group', adminOnly, wrap(async (req, res, next) => {
   const group = settingsGroups[req.params.group];
   if (!group) return next();
+  await saveSnapshot('auto', `Before editing settings: ${group.label}`);
   const clean = coerce(group.fields, req.body);
   const $set = {}; Object.keys(clean).forEach((k) => { $set['data.' + k] = clean[k]; });
   await Content.updateOne({ key: 'site' }, { $set }, { upsert: true });
@@ -110,6 +112,7 @@ router.get('/pages/:key', wrap(async (req, res, next) => {
 router.post('/pages/:key', wrap(async (req, res, next) => {
   const def = pages[req.params.key];
   if (!def) return next();
+  await saveSnapshot('auto', `Before editing page: ${def.label}`);
   await Content.updateOne({ key: req.params.key }, { $set: { data: coerce(def.fields, req.body) } }, { upsert: true });
   flash(req, 'ok', 'Saved. Changes are live on the website.');
   res.redirect(req.originalUrl);
@@ -137,6 +140,7 @@ async function saveProgram(doc, body) {
   return doc;
 }
 router.post('/programs', wrap(async (req, res) => {
+  await saveSnapshot('auto', 'Before creating a new program');
   const doc = await saveProgram(new Program(), req.body);
   flash(req, 'ok', 'Program created.'); res.redirect('/admin/programs/' + doc._id);
 }));
@@ -148,10 +152,13 @@ router.get('/programs/:id', wrap(async (req, res, next) => {
 router.post('/programs/:id', wrap(async (req, res, next) => {
   const pr = await Program.findById(req.params.id).catch(() => null);
   if (!pr) return next();
+  await saveSnapshot('auto', `Before editing program: ${pr.title}`);
   await saveProgram(pr, req.body);
   flash(req, 'ok', 'Program saved.'); res.redirect('/admin/programs/' + pr._id);
 }));
 router.post('/programs/:id/delete', wrap(async (req, res) => {
+  const pr = await Program.findById(req.params.id).lean().catch(() => null);
+  await saveSnapshot('auto', `Before deleting program: ${pr ? pr.title : req.params.id}`);
   await Program.deleteOne({ _id: req.params.id });
   flash(req, 'ok', 'Program deleted.'); res.redirect('/admin/programs');
 }));
@@ -161,12 +168,14 @@ router.get('/gallery', wrap(async (req, res) => {
   res.render('admin/gallery', { items: await GalleryItem.find().sort({ order: 1, createdAt: 1 }).lean() });
 }));
 router.post('/gallery/upload', upload.array('images', 40), verifyCsrf, wrap(async (req, res) => {
+  await saveSnapshot('auto', 'Before adding gallery photos');
   const last = await GalleryItem.findOne().sort({ order: -1 }).lean();
   let o = last ? last.order + 1 : 0;
   await GalleryItem.insertMany((req.files || []).map((f) => ({ image: '/uploads/' + f.filename, order: o++ })));
   flash(req, 'ok', `${(req.files || []).length} photo(s) added.`); res.redirect('/admin/gallery');
 }));
 router.post('/gallery/save', wrap(async (req, res) => {
+  await saveSnapshot('auto', 'Before saving gallery changes');
   const items = Object.values(req.body.items || {});
   await Promise.all(items.filter((i) => /^[a-f0-9]{24}$/.test(i.id || '')).map((i) => GalleryItem.updateOne({ _id: i.id }, {
     caption: String(i.caption || '').slice(0, 300), visible: [].concat(i.visible || []).includes('1'), order: Number(i.order) || 0,
@@ -174,6 +183,7 @@ router.post('/gallery/save', wrap(async (req, res) => {
   flash(req, 'ok', 'Gallery saved.'); res.redirect('/admin/gallery');
 }));
 router.post('/gallery/:id/delete', wrap(async (req, res) => {
+  await saveSnapshot('auto', 'Before deleting a gallery photo');
   await GalleryItem.deleteOne({ _id: req.params.id });
   flash(req, 'ok', 'Photo removed.'); res.redirect('/admin/gallery');
 }));
@@ -230,6 +240,22 @@ router.post('/users/:id/delete', adminOnly, wrap(async (req, res) => {
   if (String(u._id) === String(req.user._id)) { flash(req, 'err', 'You cannot delete your own account.'); return res.redirect('/admin/users'); }
   if (u.role === 'admin' && (await activeAdmins(u._id)) === 0) { flash(req, 'err', 'There must be at least one active admin.'); return res.redirect('/admin/users'); }
   await u.deleteOne(); flash(req, 'ok', 'User deleted.'); res.redirect('/admin/users');
+}));
+
+/* ---------- restore / backups ---------- */
+// Covers Settings/Pages/Programs/Gallery only -- see models/index.js's
+// Snapshot comment for why Messages/Subscribers/Users are excluded.
+router.get('/restore', adminOnly, wrap(async (req, res) => {
+  const snapshots = await Snapshot.find().sort({ createdAt: -1 }).lean();
+  res.render('admin/restore', {
+    original: snapshots.find((s) => s.kind === 'original'),
+    recent: snapshots.filter((s) => s.kind === 'auto'),
+  });
+}));
+router.post('/restore/:id', adminOnly, wrap(async (req, res) => {
+  await restoreSnapshot(req.params.id);
+  flash(req, 'ok', 'Previous state restored.');
+  res.redirect('/admin/restore');
 }));
 
 /* ---------- my account ---------- */

@@ -1,0 +1,40 @@
+<%- include('head', {title: 'Restore last state'}) %>
+<div class="page-head"><h1>Restore last state</h1></div>
+<p class="muted">Covers Settings, Pages, Programs and Gallery &mdash; the content edited elsewhere in this dashboard.
+Messages, Subscribers and Users are not affected by a restore.</p>
+
+<h3>Permanent backup</h3>
+<p class="muted">A full copy of the site exactly as it was when this feature was switched on. It never gets overwritten or deleted.</p>
+<% if (original) { %>
+<table class="tbl">
+  <tr><th>Saved</th><th><%= new Date(original.createdAt).toLocaleString('en-GB') %></th>
+    <td class="right">
+      <form method="post" action="/admin/restore/<%= original._id %>" class="inline">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn-danger btn-sm" data-confirm="Restore the site to its original state? Anything changed since will be saved as a new recovery point first, so you can undo this too.">Restore this</button>
+      </form>
+    </td>
+  </tr>
+</table>
+<% } else { %><p class="muted">Not captured yet &mdash; it is created automatically the next time the server starts.</p><% } %>
+
+<h3 class="mt">Recent changes</h3>
+<p class="muted">The state right before each of your last <%= recent.length %> major changes (max 3). Use these to undo a settings edit, or bring back a deleted program/photo.</p>
+<% if (recent.length) { %>
+<table class="tbl">
+  <tr><th>What was about to change</th><th>Saved</th><th></th></tr>
+  <% recent.forEach(s=>{ %>
+  <tr>
+    <td><%= s.label %></td>
+    <td><%= new Date(s.createdAt).toLocaleString('en-GB') %></td>
+    <td class="right">
+      <form method="post" action="/admin/restore/<%= s._id %>" class="inline">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn-danger btn-sm" data-confirm="Restore to how things were right before this change? Anything changed since will be saved as a new recovery point first, so you can undo this too.">Restore this</button>
+      </form>
+    </td>
+  </tr>
+  <% }) %>
+</table>
+<% } else { %><p class="muted">No changes recorded yet &mdash; this fills up as you edit settings, pages, programs or gallery.</p><% } %>
+<%- include('foot') %>
