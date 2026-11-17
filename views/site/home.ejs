@@ -1,0 +1,74 @@
+<%- include('partials/head') %>
+<% const h = p.hero || {}; %>
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="wrap hero-in">
+    <div class="hero-copy reveal">
+      <% if (h.badge) { %><span class="badge"><i></i><%= h.badge %></span><% } %>
+      <h1><%= h.title %></h1>
+      <p class="lead"><%= h.subtitle %></p>
+      <div class="hero-cta">
+        <% if (h.primaryLabel) { %><a class="btn btn-primary" href="<%= h.primaryLink || '#' %>"><%= h.primaryLabel %></a><% } %>
+        <% if (h.secondaryLabel) { %><a class="btn btn-ghost" href="<%= h.secondaryLink || '#' %>"><%= h.secondaryLabel %> →</a><% } %>
+      </div>
+    </div>
+    <div class="hero-art reveal">
+      <div class="arch"><% if (h.image) { %><img src="<%= h.image %>" alt="<%= h.title %>"><% } %></div>
+      <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+    </div>
+  </div>
+</section>
+
+<% if (p.mission && p.mission.visible) { const m = p.mission; %>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <% if (m.eyebrow) { %><span class="eyebrow"><%= m.eyebrow %></span><% } %>
+      <h2><%= m.title %></h2>
+      <p><%= m.intro %></p>
+    </div>
+    <div class="grid grid-3">
+      <% (m.items||[]).forEach((it,i)=>{ %>
+      <div class="feature reveal" style="--d:<%= i*80 %>ms">
+        <span class="feature-icon"><%- include('partials/icon', {name: it.icon}) %></span>
+        <h3><%= it.title %></h3>
+        <p><%= it.text %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (p.programs && p.programs.visible && programs.length) { const g = p.programs; %>
+<section class="section section-tint">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <% if (g.eyebrow) { %><span class="eyebrow"><%= g.eyebrow %></span><% } %>
+      <h2><%= g.title %></h2>
+      <p><%= g.intro %></p>
+    </div>
+    <div class="grid grid-3">
+      <% programs.forEach(pr=>{ %><%- include('partials/program-card', {pr}) %><% }) %>
+    </div>
+    <% if (g.buttonLabel) { %><p class="center mt"><a class="btn btn-outline" href="/programs"><%= g.buttonLabel %></a></p><% } %>
+  </div>
+</section>
+<% } %>
+
+<% if (p.cta && p.cta.visible) { const c = p.cta; %>
+<section class="cta" id="subscribe" <% if (c.image) { %>style="background-image:url('<%= c.image %>')"<% } %>>
+  <div class="wrap cta-in reveal">
+    <h2><%= c.title %></h2>
+    <% if (c.text) { %><p><%= c.text %></p><% } %>
+    <% if (flash) { %><p class="flash <%= flash.type %>"><%= flash.text %></p><% } %>
+    <form method="post" action="/subscribe" class="inline-form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="email" name="email" placeholder="Your email address" required aria-label="Email">
+      <button class="btn btn-warm" type="submit"><%= c.buttonLabel || 'Subscribe' %></button>
+    </form>
+  </div>
+</section>
+<% } %>
+<%- include('partials/foot') %>

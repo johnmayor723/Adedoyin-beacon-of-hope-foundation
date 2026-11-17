@@ -1,0 +1,24 @@
+<%- include('head', {title: 'Overview'}) %>
+<h1>Welcome, <%= me.name.split(' ')[0] %></h1>
+<p class="muted">Everything on the public website is editable from here.</p>
+<div class="stats">
+  <a class="stat" href="/admin/programs"><b><%= stats.programs %></b>Programs</a>
+  <a class="stat" href="/admin/gallery"><b><%= stats.gallery %></b>Gallery photos</a>
+  <a class="stat" href="/admin/messages"><b><%= stats.messages %></b>Messages<% if (unread) { %> <em><%= unread %> new</em><% } %></a>
+  <% if (isAdmin) { %><a class="stat" href="/admin/subscribers"><b><%= stats.subscribers %></b>Subscribers</a><% } %>
+</div>
+<div class="cols">
+  <section class="box"><h2>Quick edit</h2>
+    <div class="chips">
+      <% Object.keys(pageList).forEach(k=>{ %><a class="chip" href="/admin/pages/<%= k %>"><%= pageList[k].label %></a><% }) %>
+      <a class="chip alt" href="/admin/programs/new">+ New program</a>
+      <% if (isAdmin) { %><a class="chip alt" href="/admin/settings/identity">Logo & identity</a><a class="chip alt" href="/admin/settings/navigation">Navbar links</a><a class="chip alt" href="/admin/settings/footer">Footer</a><% } %>
+    </div>
+  </section>
+  <section class="box"><h2>Latest messages</h2>
+    <% if (!recent.length) { %><p class="muted">No messages yet.</p><% } %>
+    <% recent.forEach(m=>{ %><p class="msg-line"><strong><%= m.name %></strong> <span class="muted"><%= m.email %></span><br><%= m.message.slice(0,110) %><%= m.message.length>110?'…':'' %></p><% }) %>
+    <a href="/admin/messages">Open inbox →</a>
+  </section>
+</div>
+<%- include('foot') %>

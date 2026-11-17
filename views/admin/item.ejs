@@ -1,0 +1,13 @@
+<div class="item" data-idx="<%= i %>">
+  <div class="item-bar">
+    <span class="item-title" data-key="<%= f.itemLabel || '' %>"><%= (it && it[f.itemLabel]) || 'New item' %></span>
+    <span>
+      <button type="button" class="ib" data-up title="Move up">↑</button>
+      <button type="button" class="ib" data-down title="Move down">↓</button>
+      <button type="button" class="ib del" data-remove title="Remove">✕</button>
+    </span>
+  </div>
+  <div class="item-body">
+    <% f.fields.forEach(sf=>{ %><%- include('field', {f: sf, name: name + '[' + i + '][' + sf.key + ']', val: (it || {})[sf.key]}) %><% }) %>
+  </div>
+</div>

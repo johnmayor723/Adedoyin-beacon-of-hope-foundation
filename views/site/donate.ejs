@@ -1,0 +1,16 @@
+<%- include('partials/head') %>
+<%- include('partials/banner', {b: p.banner || {}, crumb: 'Donate'}) %>
+<% const i = p.intro || {}, b = p.bank || {}; %>
+<section class="section">
+  <div class="wrap narrow">
+    <div class="section-head reveal"><h2><%= i.title %></h2><% if (i.text) { %><p><%= i.text %></p><% } %></div>
+    <div class="panel reveal">
+      <h3><%= b.title %></h3>
+      <dl class="bank">
+        <% (b.details||[]).forEach(d=>{ %><div><dt><%= d.label %></dt><dd><%= d.value %></dd></div><% }) %>
+      </dl>
+      <% if (b.note) { %><p class="muted"><%= b.note %></p><% } %>
+    </div>
+  </div>
+</section>
+<%- include('partials/foot') %>

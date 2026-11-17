@@ -1,0 +1,7 @@
+<%- include('head', {title: 'Pages'}) %>
+<h1>Pages</h1><p class="muted">Choose a page to edit its headers, text, images and sections.</p>
+<div class="tiles">
+  <% Object.keys(pageList).forEach(k=>{ %><a class="tile" href="/admin/pages/<%= k %>"><strong><%= pageList[k].label %></strong><span class="muted"><%= pageList[k].url %></span></a><% }) %>
+  <a class="tile" href="/admin/programs"><strong>Individual programs</strong><span class="muted">Each program has its own page</span></a>
+</div>
+<%- include('foot') %>

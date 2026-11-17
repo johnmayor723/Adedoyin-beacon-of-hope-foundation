@@ -1,0 +1,28 @@
+<%- include('head', {title: 'Gallery'}) %>
+<h1>Gallery</h1>
+<form class="box uploadbox" method="post" enctype="multipart/form-data" action="/admin/gallery/upload">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <strong>Add photos</strong>
+  <input type="file" name="images" accept="image/*" multiple required>
+  <button class="btn">Upload</button>
+</form>
+<form method="post" action="/admin/gallery/save">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="ggrid">
+    <% items.forEach((g,i)=>{ %>
+    <div class="gitem">
+      <img src="<%= g.image %>" alt="">
+      <input type="hidden" name="items[<%= i %>][id]" value="<%= g._id %>">
+      <input name="items[<%= i %>][caption]" value="<%= g.caption %>" placeholder="Caption (optional)">
+      <div class="grow">
+        <label>Order <input type="number" name="items[<%= i %>][order]" value="<%= g.order %>"></label>
+        <label class="check"><input type="hidden" name="items[<%= i %>][visible]" value="0"><input type="checkbox" name="items[<%= i %>][visible]" value="1" <%= g.visible?'checked':'' %>> Visible</label>
+      </div>
+      <button class="btn btn-danger btn-sm" formaction="/admin/gallery/<%= g._id %>/delete" data-confirm="Remove this photo from the gallery?" formnovalidate>Remove</button>
+    </div>
+    <% }) %>
+  </div>
+  <% if (!items.length) { %><p class="muted">No photos yet.</p><% } %>
+  <div class="savebar"><button class="btn">Save gallery</button></div>
+</form>
+<%- include('foot') %>

@@ -1,0 +1,27 @@
+<%- include('head', {title: 'Users'}) %>
+<h1>Users</h1>
+<p class="muted"><b>Admin</b>: everything, including settings, subscribers and users. <b>Editor</b>: pages, programs, gallery and messages.</p>
+<% users.forEach(u=>{ %>
+<form method="post" action="/admin/users/<%= u._id %>" class="box urow">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div><strong><%= u.email %></strong><br><small class="muted">Last login: <%= u.lastLogin ? u.lastLogin.toLocaleString('en-GB', {timeZone:'Africa/Lagos'}) : 'never' %></small></div>
+  <input name="name" value="<%= u.name %>" aria-label="Name">
+  <select name="role" aria-label="Role"><option value="editor" <%= u.role==='editor'?'selected':'' %>>Editor</option><option value="admin" <%= u.role==='admin'?'selected':'' %>>Admin</option></select>
+  <label class="check"><input type="hidden" name="active" value="0"><input type="checkbox" name="active" value="1" <%= u.active?'checked':'' %>> Active</label>
+  <input type="password" name="password" placeholder="New password (optional)" autocomplete="new-password">
+  <span class="rowbtns"><button class="btn btn-sm">Save</button>
+  <% if (String(u._id) !== String(me._id)) { %><button class="btn btn-danger btn-sm" formaction="/admin/users/<%= u._id %>/delete" data-confirm="Delete this user?" formnovalidate>Delete</button><% } %></span>
+</form>
+<% }) %>
+<form method="post" action="/admin/users" class="box newuser">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <h2>Add a user</h2>
+  <div class="row4">
+    <input name="name" placeholder="Full name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password (min 10 chars)" minlength="10" required autocomplete="new-password">
+    <select name="role"><option value="editor">Editor</option><option value="admin">Admin</option></select>
+  </div>
+  <button class="btn">Create user</button>
+</form>
+<%- include('foot') %>

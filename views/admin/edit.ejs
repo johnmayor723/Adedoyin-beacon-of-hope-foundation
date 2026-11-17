@@ -1,0 +1,14 @@
+<%- include('head') %>
+<div class="page-head">
+  <h1><%= title %></h1>
+  <% if (back) { %><a class="btn btn-light" href="<%= back.url %>" <%- back.url.indexOf('/admin')===0 ? '' : 'target="_blank" rel="noopener"' %>><%= back.label %></a><% } %>
+</div>
+<form method="post" action="<%= action %>" class="editor" data-editor>
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <% fields.forEach(f=>{ %><%- include('field', {f, name: f.key, val: data[f.key]}) %><% }) %>
+  <div class="savebar">
+    <button class="btn">Save changes</button>
+    <% if (typeof deleteUrl !== 'undefined') { %><button class="btn btn-danger" formaction="<%= deleteUrl %>" data-confirm="Delete this item permanently?" formnovalidate>Delete</button><% } %>
+  </div>
+</form>
+<%- include('foot') %>

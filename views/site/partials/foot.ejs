@@ -1,0 +1,38 @@
+</main>
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div>
+      <a class="brand brand-light" href="/">
+        <% if (site.logo) { %><img src="<%= site.logo %>" alt="" width="64" height="64"><% } %>
+        <strong><%= site.siteName %></strong>
+      </a>
+      <% if (site.footerAbout) { %><p class="foot-about"><%= site.footerAbout %></p><% } %>
+      <div class="social">
+        <% (site.socials||[]).filter(s=>s.url).forEach(s=>{ %>
+          <a href="<%= s.url %>" target="_blank" rel="noopener" aria-label="<%= s.platform %>"><%- include('social', {p:s.platform}) %></a>
+        <% }) %>
+      </div>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <ul>
+        <% (site.footerLinks||[]).filter(l=>l.visible).forEach(l=>{ %><li><a href="<%= l.url %>"><%= l.label %></a></li><% }) %>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul class="contact-list">
+        <% if (site.phone) { %><li><a href="tel:<%= site.phone.replace(/[^+\d]/g,'') %>"><%= site.phone %></a></li><% } %>
+        <% if (site.email) { %><li><a href="mailto:<%= site.email %>"><%= site.email %></a></li><% } %>
+        <% if (site.address) { %><li><%= site.address %></li><% } %>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap foot-bar">
+    <span>&copy; <%= year %> <%= site.copyright %></span>
+    <% if (site.creditName) { %><span><%= site.creditText %> <a href="<%= site.creditLink %>" target="_blank" rel="noopener"><%= site.creditName %></a></span><% } %>
+  </div>
+</footer>
+<script src="/js/site.js"></script>
+</body>
+</html>

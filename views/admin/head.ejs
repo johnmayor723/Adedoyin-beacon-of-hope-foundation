@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="<%= csrf %>"><meta name="robots" content="noindex">
+<title><%= typeof title !== 'undefined' ? title + ' · ' : '' %>Dashboard</title>
+<link rel="stylesheet" href="/css/admin.css">
+</head><body>
+<% const A = (p) => (active === p || active.indexOf(p + '/') === 0) ? 'on' : ''; %>
+<div class="shell">
+<aside class="sidebar" id="sidebar">
+  <a class="logo" href="/admin"><span>◆</span> Site Dashboard</a>
+  <nav>
+    <a class="<%= active === '/' ? 'on' : '' %>" href="/admin">Overview</a>
+    <p class="grp">Content</p>
+    <a class="<%= A('/pages') %>" href="/admin/pages">Pages</a>
+    <a class="<%= A('/programs') %>" href="/admin/programs">Programs</a>
+    <a class="<%= A('/gallery') %>" href="/admin/gallery">Gallery</a>
+    <p class="grp">Inbox</p>
+    <a class="<%= A('/messages') %>" href="/admin/messages">Messages <% if (unread) { %><b class="pill"><%= unread %></b><% } %></a>
+    <% if (isAdmin) { %><a class="<%= A('/subscribers') %>" href="/admin/subscribers">Subscribers</a><% } %>
+    <% if (isAdmin) { %>
+    <p class="grp">Site settings</p>
+    <% Object.keys(groupList).forEach(k=>{ %><a class="<%= A('/settings/'+k) %>" href="/admin/settings/<%= k %>"><%= groupList[k].label %></a><% }) %>
+    <p class="grp">Admin</p>
+    <a class="<%= A('/users') %>" href="/admin/users">Users</a>
+    <% } %>
+    <a class="<%= A('/account') %>" href="/admin/account">My account</a>
+  </nav>
+  <div class="side-foot">
+    <a href="/" target="_blank" rel="noopener">View website ↗</a>
+    <form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="linkbtn">Sign out (<%= me.name.split(' ')[0] %>)</button></form>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar"><button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button></div>
+  <% if (flash) { %><div class="flash <%= flash.type %>"><%= flash.text %></div><% } %>

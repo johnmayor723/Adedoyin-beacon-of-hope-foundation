@@ -1,0 +1,37 @@
+<% const esc = (v) => v === undefined || v === null ? '' : v; %>
+<% if (f.type === 'group') { %>
+<fieldset class="group"><legend><%= f.label %></legend>
+  <% f.fields.forEach(sf=>{ %><%- include('field', {f: sf, name: name + '[' + sf.key + ']', val: (val || {})[sf.key]}) %><% }) %>
+</fieldset>
+<% } else if (f.type === 'list') { const items = Array.isArray(val) ? val : []; %>
+<div class="field listfield">
+  <div class="lbl"><%= f.label %></div>
+  <div class="list" data-name="<%= name %>">
+    <% items.forEach((it,i)=>{ %><%- include('item', {f, name, i, it}) %><% }) %>
+  </div>
+  <template><%- include('item', {f, name, i: '__i__', it: {}}) %></template>
+  <button type="button" class="btn btn-light" data-add>+ Add item</button>
+</div>
+<% } else if (f.type === 'bool') { %>
+<div class="field check"><input type="hidden" name="<%= name %>" value="0"><label><input type="checkbox" name="<%= name %>" value="1" <%= val ? 'checked' : '' %>> <%= f.label %></label></div>
+<% } else if (f.type === 'image') { %>
+<div class="field imgf">
+  <div class="lbl"><%= f.label %></div>
+  <input type="hidden" name="<%= name %>" value="<%= esc(val) %>">
+  <div class="imgbox"><img src="<%= esc(val) %>" alt="" <%- val ? '' : 'hidden' %>><span class="ph" <%- val ? 'hidden' : '' %>>No image</span></div>
+  <div class="imgbtn">
+    <label class="btn btn-light">Upload<input type="file" accept="image/*" hidden data-upload></label>
+    <button type="button" class="btn btn-light" data-pick>Choose existing</button>
+    <button type="button" class="btn btn-light" data-clear>Remove</button>
+  </div>
+  <% if (f.help) { %><small><%= f.help %></small><% } %>
+</div>
+<% } else if (f.type === 'textarea') { %>
+<label class="field"><span class="lbl"><%= f.label %></span><textarea name="<%= name %>" rows="<%= f.rows || 4 %>"><%= esc(val) %></textarea><% if (f.help) { %><small><%= f.help %></small><% } %></label>
+<% } else if (f.type === 'select') { %>
+<label class="field"><span class="lbl"><%= f.label %></span><select name="<%= name %>"><option value="">—</option><% f.options.forEach(o=>{ %><option value="<%= o %>" <%= val===o ? 'selected':'' %>><%= o %></option><% }) %></select></label>
+<% } else if (f.type === 'color') { %>
+<label class="field"><span class="lbl"><%= f.label %></span><input type="color" name="<%= name %>" value="<%= esc(val) || '#000000' %>"></label>
+<% } else { %>
+<label class="field"><span class="lbl"><%= f.label %></span><input type="<%= f.type === 'number' ? 'number' : 'text' %>" <%- f.type === 'number' ? 'step="any"' : '' %> name="<%= name %>" value="<%= esc(val) %>" <%= f.required ? 'required' : '' %>><% if (f.help) { %><small><%= f.help %></small><% } %></label>
+<% } %>

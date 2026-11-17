@@ -1,0 +1,18 @@
+<% const pct = pr.goal ? Math.min(100, Math.round(pr.raised / pr.goal * 100)) : 0; const fmt = n => Number(n||0).toLocaleString('en-US'); %>
+<article class="card reveal">
+  <a class="card-img" href="/programs/<%= pr.slug %>">
+    <% if (pr.cardImage) { %><img src="<%= pr.cardImage %>" alt="<%= pr.title %>" loading="lazy"><% } else { %><div class="img-fallback"><%- include('icon', {name:'heart'}) %></div><% } %>
+  </a>
+  <div class="card-body">
+    <h3><a href="/programs/<%= pr.slug %>"><%= pr.title %></a></h3>
+    <% if (pr.summary) { %><p><%= pr.summary %></p><% } %>
+    <% if (pr.showProgress && pr.goal) { %>
+      <div class="progress" aria-label="<%= pct %>% raised"><span style="width:<%= pct %>%"></span></div>
+      <p class="raised"><strong><%= pr.currency %><%= fmt(pr.raised) %></strong> raised of <%= pr.currency %><%= fmt(pr.goal) %></p>
+    <% } %>
+    <div class="card-actions">
+      <a class="btn btn-primary btn-sm" href="<%= pr.ctaLink || '/donate' %>"><%= pr.ctaLabel || 'Donate' %></a>
+      <a class="link-arrow" href="/programs/<%= pr.slug %>">Learn more →</a>
+    </div>
+  </div>
+</article>

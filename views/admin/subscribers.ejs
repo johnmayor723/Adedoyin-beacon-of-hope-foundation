@@ -1,0 +1,8 @@
+<%- include('head', {title: 'Subscribers'}) %>
+<div class="page-head"><h1>Subscribers</h1><a class="btn" href="/admin/subscribers.csv">Download CSV</a></div>
+<table class="tbl"><tr><th>Email</th><th>Joined</th><th></th></tr>
+<% subs.forEach(s=>{ %><tr><td><%= s.email %></td><td><%= s.createdAt.toLocaleDateString('en-GB') %></td>
+<td class="right"><form method="post" action="/admin/subscribers/<%= s._id %>/delete" class="inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-danger btn-sm" data-confirm="Remove subscriber?">Remove</button></form></td></tr><% }) %>
+</table>
+<% if (!subs.length) { %><p class="muted">No subscribers yet.</p><% } %>
+<%- include('foot') %>

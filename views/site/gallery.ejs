@@ -1,0 +1,13 @@
+<%- include('partials/head') %>
+<%- include('partials/banner', {b: p.banner || {}, crumb: 'Gallery'}) %>
+<% const i = p.intro || {}; %>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal"><h2><%= i.title %></h2><% if (i.text) { %><p><%= i.text %></p><% } %></div>
+    <div class="masonry">
+      <% items.forEach(g=>{ %><figure class="reveal"><img src="<%= g.image %>" alt="<%= g.caption || 'Gallery photo' %>" loading="lazy" data-lightbox><% if (g.caption) { %><figcaption><%= g.caption %></figcaption><% } %></figure><% }) %>
+    </div>
+    <% if (!items.length) { %><p class="center muted">No photos yet.</p><% } %>
+  </div>
+</section>
+<%- include('partials/foot') %>

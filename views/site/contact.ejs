@@ -1,0 +1,27 @@
+<%- include('partials/head') %>
+<%- include('partials/banner', {b: p.banner || {}, crumb: 'Contact'}) %>
+<% const i = p.intro || {}, f = p.form || {}; %>
+<section class="section">
+  <div class="wrap contact-grid">
+    <div class="reveal">
+      <h2><%= i.title %></h2>
+      <% if (i.text) { %><p class="prose"><%= i.text %></p><% } %>
+      <ul class="info">
+        <% if (site.phone) { %><li><span><%- include('partials/icon', {name:'sun'}) %></span><div><small>Call us anytime</small><a href="tel:<%= site.phone.replace(/[^+\d]/g,'') %>"><%= site.phone %></a></div></li><% } %>
+        <% if (site.email) { %><li><span><%- include('partials/icon', {name:'book'}) %></span><div><small>Email us</small><a href="mailto:<%= site.email %>"><%= site.email %></a></div></li><% } %>
+        <% if (site.address) { %><li><span><%- include('partials/icon', {name:'home'}) %></span><div><small>Visit us</small><%= site.address %></div></li><% } %>
+      </ul>
+    </div>
+    <form class="panel form reveal" id="form" method="post" action="/contact">
+      <h3><%= f.title %></h3>
+      <% if (flash) { %><p class="flash <%= flash.type %>"><%= flash.text %></p><% } %>
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label>Your name<input name="name" required maxlength="120"></label>
+      <div class="two"><label>Email<input type="email" name="email" required maxlength="200"></label><label>Phone<input name="phone" maxlength="40"></label></div>
+      <label>Message<textarea name="message" rows="5" required maxlength="5000"></textarea></label>
+      <button class="btn btn-primary" type="submit"><%= f.buttonLabel || 'Send' %></button>
+    </form>
+  </div>
+</section>
+<%- include('partials/foot') %>

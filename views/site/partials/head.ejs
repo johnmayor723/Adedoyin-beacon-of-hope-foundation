@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+  <% if (description) { %><meta name="description" content="<%= description %>"><% } %>
+  <meta property="og:title" content="<%= title %>">
+  <% if (description) { %><meta property="og:description" content="<%= description %>"><% } %>
+  <% if (site.logo) { %><meta property="og:image" content="<%= site.logo %>"><% } %>
+  <% if (site.favicon) { %><link rel="icon" href="<%= site.favicon %>"><% } %>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/site.css">
+  <style>:root{
+    <% if (site.colorPrimary) { %>--primary:<%= site.colorPrimary %>;<% } %>
+    <% if (site.colorAccent) { %>--accent:<%= site.colorAccent %>;<% } %>
+    <% if (site.colorWarm) { %>--warm:<%= site.colorWarm %>;<% } %>
+    <% if (site.colorInk) { %>--ink:<%= site.colorInk %>;<% } %>
+  }</style>
+</head>
+<body>
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="<%= site.siteName %>">
+      <% if (site.logo) { %><img src="<%= site.logo %>" alt="" width="52" height="52"><% } %>
+      <span><strong><%= site.siteName %></strong></span>
+    </a>
+    <button class="burger" aria-label="Menu" aria-expanded="false" onclick="document.getElementById('nav').classList.toggle('open');this.setAttribute('aria-expanded',document.getElementById('nav').classList.contains('open'))"><i></i><i></i><i></i></button>
+    <nav class="menu">
+      <% (site.headerLinks||[]).filter(l=>l.visible).forEach(l=>{ const cur = (l.url===path) || (l.url!=='/' && path.indexOf(l.url)===0); %>
+        <a href="<%= l.url %>" class="<%= cur ? 'on' : '' %>"><%= l.label %></a>
+      <% }) %>
+      <% if (site.navButtonLabel) { %><a class="btn btn-warm btn-sm" href="<%= site.navButtonLink || '/donate' %>"><%= site.navButtonLabel %></a><% } %>
+    </nav>
+  </div>
+</header>
+<main>

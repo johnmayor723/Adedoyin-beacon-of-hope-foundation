@@ -1,0 +1,7 @@
+<section class="banner" <% if (b.image) { %>style="background-image:url('<%= b.image %>')"<% } %>>
+  <div class="wrap banner-in reveal">
+    <p class="crumbs"><a href="/">Home</a> <span>/</span> <%= crumb || b.title %></p>
+    <h1><%= b.title %></h1>
+    <% if (b.subtitle) { %><p class="lead"><%= b.subtitle %></p><% } %>
+  </div>
+</section>

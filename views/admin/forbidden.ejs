@@ -1,0 +1,4 @@
+<%- include('head', {title: 'Not available'}) %>
+<h1><%= typeof notFound !== 'undefined' ? 'Not found' : 'Not allowed' %></h1>
+<p class="muted"><%= typeof notFound !== 'undefined' ? 'That dashboard page does not exist.' : 'Your role does not have access to this area. Ask an admin.' %></p>
+<%- include('foot') %>

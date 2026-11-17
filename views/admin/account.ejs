@@ -1,0 +1,10 @@
+<%- include('head', {title: 'My account'}) %>
+<h1>My account</h1>
+<form method="post" action="/admin/account" class="box narrowf">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <label class="field"><span class="lbl">Name</span><input name="name" value="<%= me.name %>"></label>
+  <label class="field"><span class="lbl">Current password</span><input type="password" name="current" required autocomplete="current-password"></label>
+  <label class="field"><span class="lbl">New password (min 10 characters)</span><input type="password" name="password" minlength="10" required autocomplete="new-password"></label>
+  <button class="btn">Update</button>
+</form>
+<%- include('foot') %>

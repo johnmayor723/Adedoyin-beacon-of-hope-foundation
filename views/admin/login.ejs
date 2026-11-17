@@ -1,0 +1,9 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Sign in</title><link rel="stylesheet" href="/css/admin.css"></head>
+<body class="login-body"><form class="login" method="post" action="/admin/login">
+<h1>Sign in</h1><p class="muted">Website dashboard</p>
+<% if (flash) { %><div class="flash <%= flash.type %>"><%= flash.text %></div><% } %>
+<input type="hidden" name="_csrf" value="<%= csrf %>">
+<label>Email<input type="email" name="email" required autofocus autocomplete="username"></label>
+<label>Password<input type="password" name="password" required autocomplete="current-password"></label>
+<button class="btn">Sign in</button>
+</form></body></html>

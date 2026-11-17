@@ -1,0 +1,16 @@
+<%- include('partials/head') %>
+<%- include('partials/banner', {b: p.banner || {}, crumb: 'Programs'}) %>
+<% const i = p.intro || {}; %>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <% if (i.eyebrow) { %><span class="eyebrow"><%= i.eyebrow %></span><% } %>
+      <h2><%= i.title %></h2><% if (i.text) { %><p><%= i.text %></p><% } %>
+    </div>
+    <div class="grid grid-3">
+      <% programs.forEach(pr=>{ %><%- include('partials/program-card', {pr}) %><% }) %>
+    </div>
+    <% if (!programs.length) { %><p class="center muted">No programs published yet.</p><% } %>
+  </div>
+</section>
+<%- include('partials/foot') %>

@@ -1,0 +1,38 @@
+<%- include('partials/head') %>
+<% const pr = program; const pct = pr.goal ? Math.min(100, Math.round(pr.raised / pr.goal * 100)) : 0; const fmt = n => Number(n||0).toLocaleString('en-US'); %>
+<%- include('partials/banner', {b: {title: pr.heroTitle || pr.title, subtitle: pr.heroSubtitle || '', image: pr.heroImage || pr.cardImage}, crumb: pr.title}) %>
+<section class="section">
+  <div class="wrap detail">
+    <article class="reveal">
+      <% paras(pr.body).forEach(t=>{ %><p class="prose"><%= t %></p><% }) %>
+      <% (pr.sections||[]).forEach((s,i)=>{ %>
+      <div class="block <%= i%2 ? 'flip' : '' %>">
+        <% if (s.image) { %><img src="<%= s.image %>" alt="<%= s.heading %>" loading="lazy"><% } %>
+        <div><% if (s.heading) { %><h3><%= s.heading %></h3><% } %><% paras(s.text).forEach(t=>{ %><p class="prose"><%= t %></p><% }) %></div>
+      </div>
+      <% }) %>
+      <% if ((pr.gallery||[]).length) { %>
+      <h3 class="mt">Gallery</h3>
+      <div class="masonry small">
+        <% pr.gallery.forEach(g=>{ %><figure><img src="<%= g.image %>" alt="<%= g.caption || pr.title %>" loading="lazy" data-lightbox><% if (g.caption) { %><figcaption><%= g.caption %></figcaption><% } %></figure><% }) %>
+      </div>
+      <% } %>
+    </article>
+    <aside class="side reveal">
+      <div class="panel">
+        <% if (pr.showProgress && pr.goal) { %>
+          <h4>Fundraising progress</h4>
+          <div class="progress"><span style="width:<%= pct %>%"></span></div>
+          <p class="raised"><strong><%= pr.currency %><%= fmt(pr.raised) %></strong> raised of <%= pr.currency %><%= fmt(pr.goal) %> (<%= pct %>%)</p>
+        <% } else { %><h4>Support this program</h4><% } %>
+        <a class="btn btn-primary block-btn" href="<%= pr.ctaLink || '/donate' %>"><%= pr.ctaLabel || 'Donate' %></a>
+      </div>
+      <% if (others.length) { %>
+      <div class="panel"><h4>More programs</h4>
+        <ul class="plain"><% others.forEach(o=>{ %><li><a href="/programs/<%= o.slug %>"><%= o.title %></a></li><% }) %></ul>
+      </div>
+      <% } %>
+    </aside>
+  </div>
+</section>
+<%- include('partials/foot') %>

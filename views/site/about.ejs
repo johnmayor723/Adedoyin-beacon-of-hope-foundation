@@ -1,0 +1,47 @@
+<%- include('partials/head') %>
+<%- include('partials/banner', {b: p.banner || {}, crumb: 'About Us'}) %>
+<% const s = p.story || {}; %>
+<section class="section">
+  <div class="wrap split">
+    <div class="reveal">
+      <h2><%= s.title %></h2>
+      <% paras(s.paragraphs).forEach(t=>{ %><p class="prose"><%= t %></p><% }) %>
+    </div>
+    <% if (s.image) { %><div class="split-img reveal"><img src="<%= s.image %>" alt="<%= s.title %>" loading="lazy"></div><% } %>
+  </div>
+</section>
+<% if (p.mission && p.mission.visible) { const m = p.mission; %>
+<section class="section section-tint">
+  <div class="wrap">
+    <div class="section-head reveal"><h2><%= m.title %></h2><p><%= m.intro %></p></div>
+    <div class="grid grid-3">
+      <% (m.items||[]).forEach((it,i)=>{ %>
+      <div class="feature reveal" style="--d:<%= (i%3)*80 %>ms">
+        <span class="feature-icon"><%- include('partials/icon', {name: it.icon}) %></span>
+        <h3><%= it.title %></h3><p><%= it.text %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+<% if (p.team && p.team.visible && (p.team.members||[]).length) { const t = p.team; %>
+<section class="section" id="team">
+  <div class="wrap">
+    <div class="section-head reveal"><h2><%= t.title %></h2><% if (t.intro) { %><p><%= t.intro %></p><% } %></div>
+    <div class="grid grid-3 team">
+      <% t.members.forEach(m=>{ %>
+      <div class="member reveal">
+        <div class="member-photo">
+          <% if (m.photo) { %><img src="<%= m.photo %>" alt="<%= m.name %>" loading="lazy"><% } else { %><span><%= (m.name||'?').split(' ').filter(w=>/^[A-Za-z]/.test(w)).slice(0,2).map(w=>w[0]).join('') %></span><% } %>
+        </div>
+        <h3><%= m.name %></h3>
+        <p class="role"><%= m.role %></p>
+        <% if (m.bio) { %><p><%= m.bio %></p><% } %>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+<%- include('partials/foot') %>

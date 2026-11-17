@@ -1,0 +1,15 @@
+<%- include('head', {title: 'Programs'}) %>
+<div class="page-head"><h1>Programs</h1><a class="btn" href="/admin/programs/new">+ New program</a></div>
+<table class="tbl">
+  <tr><th></th><th>Title</th><th>Order</th><th>Status</th><th></th></tr>
+  <% programs.forEach(p=>{ %>
+  <tr>
+    <td class="thumb"><% if (p.cardImage) { %><img src="<%= p.cardImage %>" alt=""><% } %></td>
+    <td><a href="/admin/programs/<%= p._id %>"><strong><%= p.title %></strong></a><br><small class="muted">/programs/<%= p.slug %></small></td>
+    <td><%= p.order %></td>
+    <td><%= p.published ? 'Published' : 'Draft' %><%= p.featured ? ' · Featured' : '' %></td>
+    <td class="right"><a class="btn btn-light" href="/admin/programs/<%= p._id %>">Edit</a></td>
+  </tr>
+  <% }) %>
+</table>
+<%- include('foot') %>

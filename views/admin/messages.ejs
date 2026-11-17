@@ -1,0 +1,16 @@
+<%- include('head', {title: 'Messages'}) %>
+<h1>Messages</h1>
+<% if (!messages.length) { %><p class="muted">No messages yet.</p><% } %>
+<% messages.forEach(m=>{ %>
+<article class="box msg <%= m.read ? '' : 'unread' %>">
+  <header><strong><%= m.name %></strong> · <a href="mailto:<%= m.email %>"><%= m.email %></a><% if (m.phone) { %> · <%= m.phone %><% } %>
+    <span class="muted right"><%= m.createdAt.toLocaleString('en-GB', {timeZone:'Africa/Lagos'}) %></span></header>
+  <p><%= m.message %></p>
+  <form method="post" class="inline">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <% if (!m.read) { %><button class="btn btn-light btn-sm" formaction="/admin/messages/<%= m._id %>/read">Mark as read</button><% } %>
+    <button class="btn btn-danger btn-sm" formaction="/admin/messages/<%= m._id %>/delete" data-confirm="Delete this message?">Delete</button>
+  </form>
+</article>
+<% }) %>
+<%- include('foot') %>
